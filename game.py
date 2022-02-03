@@ -10,7 +10,7 @@ def game(literals=[0, 0, 0, 0, 0], contains=[], skips=[]):
         print("The first round you manually select 'AROSE'")
 
     # There are skips, but no matches. On to plan B. If this doesn't work, it doesn't have a vowel. Words fucked
-    if skips and literals == [0, 0, 0, 0, 0]:
+    if skips and literals == [0, 0, 0, 0, 0] and not contains:
         print("I guess 'AROSE' didn't work :/. Try 'UNTIL'")
 
     # Variable holding all letters we know are on the board
@@ -89,7 +89,7 @@ def game(literals=[0, 0, 0, 0, 0], contains=[], skips=[]):
                 letters.append(val[y])
 
     # Getting the top results in the same variable
-    print(letters)
+    #print(letters)
     #
     #
     #   YOU WERE HERE
