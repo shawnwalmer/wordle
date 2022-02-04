@@ -1,117 +1,103 @@
 def game(literals=[0, 0, 0, 0, 0], contains=[], skips=[]):
+    global l
     import sys, collections, random
+    from bestword import bestword
 
+    # Pre alg checks for corner cases
+    #
     if literals[0] != 0 and literals[1] != 0 and literals[2] != 0 and literals[3] != 0 and literals[4] != 0:
-        print("I can't believe you actually typed them in. You already won Tickles.")
-        sys.exit()
+        return []
 
     # If nothing is skipped we must not have played, so it is round 1
-    if not skips:
-        print("The first round you manually select 'AROSE'")
+    if not skips and literals == [0, 0, 0, 0, 0] and contains == []:
+        return []
 
     # There are skips, but no matches. On to plan B. If this doesn't work, it doesn't have a vowel. Words fucked
     if skips and literals == [0, 0, 0, 0, 0] and not contains:
-        print("I guess 'AROSE' didn't work :/. Try 'UNTIL'")
+        return []
+
+    # Pre alg checks done. Now we start the code
+    #
+
+    # Initializing variables
+    #
 
     # Variable holding all letters we know are on the board
     all_letters = []
+    # This variable will hold all valid answers for literal assignment (full match)
+    valids = set()
+    # We have to do a shallow copy because we remove elements while iterating
+    valid_and_contains = set()
 
     # Adding literals to all letters
-    for literal in literals:
-        all_letters.append(literal)
+    for l in literals:
+        if l != 0:
+            all_letters.append(l)
 
     # Adding contains to all letters
     for contained in contains:
         all_letters.append(contained)
 
-    print("Kicking off script...")
-
-    # Initializing valid. This variable will hold all valid answers for literal assignment (full match)
-    valid = set()
-
     with open("fives2.txt", "r") as fives:
-        for val in fives:
+        for v in fives:
             # We add the word to valid, then check if it is invalid. We do this because one failure removes,
             # but all tests have to be successful to add.
-            valid.add(val)
+            valids.add(v)
             x = range(5)
             for y in x:
                 if literals[y] != 0:
                     # If any literal letter doesn't match we remove. "If" statement to prevent breaking on
                     # multiple failed letters
-                    if val[y] != literals[y]:
-                        if val in valid:
-                            valid.remove(val)
-                if val[y] in skips:
-                    if val in valid:
-                        valid.remove(val)
+                    if v[y] != literals[y]:
+                        if v in valids:
+                            valids.remove(v)
+                if v[y] in skips:
+                    if v in valids:
+                        valids.remove(v)
 
     # This checks we have at least one word that works in our dictionary
-    if len(valid) == 0:
-        print("Wow, such empty.")
+    if len(valids) == 0:
+        return []
         sys.exit()
-    else:
-        print(str(len(valid)) + " valid after literal check.")
 
-    print("Checking for words containing " + str(contains))
+    # Check for solution
+    if len(valids) == 1:
+        return valids
 
     # We have to do a shallow copy because we remove elements while iterating
-    valid_and_contains = valid.copy()
+    valid_and_contains = valids.copy()
 
     # Contains check
-    for val in valid:
+    for v in valids:
+        v2 = v
+        for l in literals:
+            if l != 0:
+                v2 = v2.replace(l, "",1)
+
         for contained in contains:
-            # Val needs to be checked without the literals. Literals and contains are separate and they could duplicate
-            #
-            # TODO
-            #
-            if contained not in val:
-                if val in valid_and_contains:
-                    valid_and_contains.remove(val)
+            if contained not in v2:
+                if v in valid_and_contains:
+                    valid_and_contains.remove(v)
 
     # Re-check we didn't remove everything
-
     if len(valid_and_contains) == 0:
-        print("Wow, such empty.")
-        sys.exit()
-    elif len(valid_and_contains) == 1:
-        print(valid_and_contains)
-    else:
-        print(str(len(valid_and_contains)) + " valid after literal check.")
+        return []
+
+    # Check for solution
+    if len(valid_and_contains) == 1:
+        return valid_and_contains
 
     # All letters contained in valid words that we don't already know to be out
     letters = list()
 
-    for val in valid_and_contains:
+    for v in valid_and_contains:
         x = range(5)
         for y in x:
-            if val[y] not in skips:
-                letters.append(val[y])
+            if v[y] not in skips:
+                letters.append(v[y])
 
-    # Getting the top results in the same variable
-    #print(letters)
-    #
-    #
-    #   YOU WERE HERE
-    #
-    #
-    letters = collections.Counter(letters).most_common(5 - len(all_letters))
-
-    print("We need words with " + str(all_letters))
-    print("The most common remaining letters are:" + str(letters))
-
-    for thing in letters:
-        all_letters.append(thing[0])
-
-    finalAnswer = []
-
-    for val in valid_and_contains:
-        if all_letters[0] in val and all_letters[1] in val and all_letters[2] in val and all_letters[3] in val and \
-                all_letters[4] in val:
-            finalAnswer.append(val)
-
-    if finalAnswer:
-        print(random.sample(valid_and_contains, 1))
+    if valid_and_contains:
+        return bestword(valid_and_contains)
 
     else:
-        print(finalAnswer)
+        return valid_and_contains

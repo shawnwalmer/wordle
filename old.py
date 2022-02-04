@@ -1,14 +1,14 @@
 import sys, collections, random
 
 # The first round you manually select "AROSE"
-literal = ["S",0,"A","R","D"]
+l = ["S", 0, "A", "R", "D"]
 contains = []
 # Manually entered, like everything.
 skips = ["W", "E", "O", "T", "K", "B", "M", "P"]
 
 allLetters = []
 
-for l in literal:
+for l in l:
     if l != 0:
         # Add the letter to set of all letters
         allLetters.append(l)
@@ -18,10 +18,10 @@ for l in literal:
                 skips.remove(l)
 
 print("Kicking off script...")
-print("Checking for literal matches for " + str(literal))
+print("Checking for literal matches for " + str(l))
 
 # If there are no matches select "UNTIL"
-if skips and literal == [0, 0, 0, 0, 0] and not contains:
+if skips and l == [0, 0, 0, 0, 0] and not contains:
     print("UNTIL")
     # This causes an issue if we use it. The script assumes we use "AROSE" for letter frequency calcs
     sys.exit()
@@ -34,10 +34,10 @@ with open("fives2.txt", "r") as fives:
         valid.add(word)
         x = range(5)
         for y in x:
-            if literal[y] != 0:
+            if l[y] != 0:
                 # If any literal letter doesn't match we remove. If to prevent breaking on
                 # multiple failed letters
-                if word[y] != literal[y]:
+                if word[y] != l[y]:
                     if word in valid:
                         valid.remove(word)
             if word[y] in skips:
@@ -80,7 +80,7 @@ letters = list()
 for word in validAndContains:
     x = range(5)
     for y in x:
-        if literal[y] == 0:
+        if l[y] == 0:
             letters.append(word[y])
 
 for skip in skips:
