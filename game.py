@@ -75,7 +75,9 @@ def game(literals=[0, 0, 0, 0, 0], contains=[], skips=[]):
                 v2 = v2.replace(l, "",1)
 
         for contained in contains:
-            if contained not in v2:
+            if contained in v2:
+                v2 = v2.replace(contained, "", 1)
+            else:
                 if v in valid_and_contains:
                     valid_and_contains.remove(v)
 

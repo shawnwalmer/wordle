@@ -1,3 +1,3 @@
 from game import game
 
-print(game(["S", "H", "A", "R", 0], [],[]))
+print(game(["S", "W", 0, 0, 0], ["S", "S"],[]))
